@@ -1,0 +1,241 @@
+:revealjs_theme: league
+// beige, black, league, night, serif, simple, sky, solarized, white
+:docinfo: private
+:source-highlighter: highlight.js
+:highlightjs-theme: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css
+:customcss: custom.css
+
+= JSpecify
+
+[%step]
+Standard Annotations for Java Static Analysis
+
+[transition=none-out]
+== Das Problem
+[%step]
+[source,java]
+----
+class Customer {
+    private Address shippingAddress;
+
+    public Address getShippingAddress() {
+        return shippingAddress;
+    }
+}
+----
+[%step]
+[source,java]
+----
+public static void main(String[] args) {
+    Customer customer = EventConsumer.getCustomer();
+    printAddressLabel(customer.getShippingAddress());
+}
+----
+[%step]
+[source,java]
+----
+static void printAddressLabel(Address shippingAddress) {
+    System.out.println(shippingAddress.getAddressLine());
+}
+----
+
+[transition=none]
+== Das Problem
+[.stretch]
+image::img/nuclear-explosion.gif[size=cover]
+
+[.custom-code]
+[source, console]
+----
+Exception in thread "main" java.lang.NullPointerException:
+Cannot invoke "com.example.gratefuldeadjspecify.without.Address.getAddressLine()" because "shippingAddress" is null
+	at com.example.gratefuldeadjspecify.without.PrintAddressLabelApp.printAddressLabel(PrintAddressLabelApp.java:12)
+	at com.example.gratefuldeadjspecify.without.PrintAddressLabelApp.main(PrintAddressLabelApp.java:8)
+----
+
+== Kennt jeder - High Five 🙏
+[%step]
+Eine NullPointerException haben vermutlich alle schon einmal in unterschiedlichsten Programmiersprachen verantwortet.
+
+[%step]
+"Billion-Dollar Mistake"
+-- Tony Hoare, referring to his 1965 introduction of the null reference in the ALGOL W programming language
+
+[%notitle]
+== Null Problemo
+[%step]
+Viele haben sich darüber den Kopf zerbrochen
+[%step]
+und _unabhängig_ voneinander gesagt:
+[%step]
+image::img/null-problemo.jpg[size=cover]
+
+== Der Versuch das Problem zu lösen
+[.stretch]
+[source]
+----
+android.support.annotation.NonNull
+androidx.annotation.NonNull
+androidx.annotation.RecentlyNonNull
+com.android.annotations.NonNull
+edu.umd.cs.findbugs.annotations.NonNull
+io.reactivex.annotations.NonNull
+io.reactivex.rxjava3.annotations.NonNull
+io.micrometer.core.lang.NonNull
+jakarta.annotation.Nonnull
+javax.annotation.Nonnull
+org.checkerframework.checker.nullness.compatqual.NonNullDecl
+org.checkerframework.checker.nullness.compatqual.NonNullType
+org.checkerframework.checker.nullness.qual.NonNull
+org.eclipse.jdt.annotation.NonNull
+org.jetbrains.annotations.NotNull
+org.jmlspecs.annotation.NonNull
+org.netbeans.api.annotations.common.NonNull
+org.springframework.lang.NonNull
+org.codehaus.commons.nullanalysis.NotNull
+reactor.util.annotation.NonNull
+----
+
+[%notitle]
+== Wir reden hier nicht von Bean Validation
+:icons: font
+
+[%step]
+IMPORTANT: Es geht hier *nicht* um Validierung
+
+[%step]
+Also `@NotNull` und andere Validierung-Annotationen aus `jakarta.validation.*` (`@Null`, `@Positive`, `@Min`, `@Max` ...)
+
+[.columns]
+== 👷 Jetzt aber wirklich 👷
+[.column]
+* EISOP Team _(EISOP)_
+* Google _(Android, Error Prone, Guava)_
+* JetBrains _(Kotlin, IntelliJ IDEA)_
+* Meta _(Infer)_
+* Microsoft _(Azure SDK for Java)_
+* Oracle _(OpenJDK)_
+
+[.column]
+* PMD Team _(PMD)_
+* Sonar _(SonarQube, SonarCloud, SonarLint)_
+* Square _(various)_
+* Uber _(NullAway)_
+* Broadcom _(Spring)_
+
+== JSpecify Annotations
+[%step]
+* `@NonNull` - Feld, Parameter oder Rückgabewert kann nicht `null` sein
+* `@Nullable` - Feld, Parameter oder Rückgabewert kann `null` sein.
+* `@NullMarked` - Alle Felder, Parameter und Rückgabewerte (an  Package, Typ, Methode oder Konstruktor) können `null` sein.
+* `@NullUnmarked` - hebt `@NullMarked` auf
+
+== JSpecify im Code
+[.stretch]
+[source,java,%linenums,highlight="0|1|3|5|16|1,3,5,16|0"]
+----
+@NullMarked
+class Customer {
+    @Nullable Address shippingAddress;
+
+    public @Nullable Address getShippingAddress() {
+        return shippingAddress;
+    }
+}
+
+public static void main(String[] args) {
+    Customer customer = EventConsumer.getCustomer();
+    printAddressLabel(customer.getShippingAddress());
+}
+
+static void printAddressLabel(
+        @Nullable Address shippingAddress) {
+    System.out.println(shippingAddress == null
+        ? "no shipping address"
+        : shippingAddress.getAddressLine());
+}
+----
+
+== Collections
+[%step]
+[source,java]
+----
+// Die Liste `tags` kann null sein
+@Nullable
+List<String> tags;
+----
+[%step]
+[source,java]
+----
+// Die Elemente in der Liste können null sein
+List<@Nullable String> tags;
+----
+[%step]
+[source,java]
+----
+// Liste und Elemente in der Liste können null sein
+@Nullable
+List<@Nullable String> tags;
+----
+
+== Arrays
+[%step]
+[source,java]
+----
+// Das Array `tags` kann null sein
+@Nullable
+String[] tags;
+----
+[%step]
+[source,java]
+----
+// Die Elemente im Array können null sein
+String @Nullable[] tags;
+----
+[%step]
+[source,java]
+----
+// Array und Elemente im Array können null sein
+@Nullable
+String @Nullable[] tags;
+----
+
+== 📏 Statische Codeanalyse in der IDE
+
+== 📐 Statische Codeanalyse beim Build
+[%step]
+mit
+
+[%step]
+* errorprone +
+https://github.com/tbroyer/gradle-errorprone-plugin
+* NullAway +
+https://github.com/tbroyer/gradle-nullaway-plugin
+
+== 🤩 Wer ist drauf?
+[%step]
+* IntelliJ
+* Spring ab Spring Framework 7.x, Spring Boot 4.x
+* JUnit 6
+* _Lombok_
+
+== 🌶️ Lombok
+Lombok kann `@NonNull` und `@Nullable` in den generierten Lombok generierten Code einfügen.
+
+[source,properties]
+----
+lombok.addNullAnnotations=jspecify
+----
+
+== 📚 Quellen
+* Jetbrains Annotations
+* Spring Framework
+** Offizielle Doku
+** Baeldung Artikel
+
+== Inspiriert von
+* heise Link
+* Baeldung Newsletter Link
+https://michael-simons.eu/p/jspecify-and-nullaway-a-fresh-take-on-nullsafety-in-the-java-world.html
+
+== Danke! 🤗 Fragen?
