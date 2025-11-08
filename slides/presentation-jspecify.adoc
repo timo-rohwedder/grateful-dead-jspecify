@@ -124,11 +124,16 @@ Also `@NotNull` und andere Validierung-Annotationen aus `jakarta.validation.*` (
 * Broadcom _(Spring)_
 
 == JSpecify Annotations
+[.r-fit-text]
 [%step]
-* `@NonNull` - Feld, Parameter oder Rückgabewert kann nicht `null` sein
-* `@Nullable` - Feld, Parameter oder Rückgabewert kann `null` sein.
-* `@NullMarked` - Alle Felder, Parameter und Rückgabewerte (an  Package, Typ, Methode oder Konstruktor) können `null` sein.
-* `@NullUnmarked` - hebt `@NullMarked` auf
+* `@NonNull` +
+Feld, Parameter oder Rückgabewert kann nicht `null` sein
+* `@Nullable` +
+Feld, Parameter oder Rückgabewert kann `null` sein.
+* `@NullMarked` +
+Alle Felder, Parameter und Rückgabewerte (an  Package, Typ, Methode oder Konstruktor) können nicht `null` sein.
+* `@NullUnmarked` +
+hebt `@NullMarked` auf
 
 == JSpecify im Code
 [.stretch]
@@ -220,22 +225,24 @@ https://github.com/tbroyer/gradle-nullaway-plugin
 * _Lombok_
 
 == 🌶️ Lombok
+[%step]
 Lombok kann `@NonNull` und `@Nullable` in den generierten Lombok generierten Code einfügen.
 
+[%step]
 [source,properties]
 ----
 lombok.addNullAnnotations=jspecify
 ----
 
 == 📚 Quellen
-* Jetbrains Annotations
-* Spring Framework
-** Offizielle Doku
-** Baeldung Artikel
-
-== Inspiriert von
-* heise Link
-* Baeldung Newsletter Link
+[.r-fit-text]
+* JSpecify +
+https://jspecify.dev
+* heise: Null Problemo: Bessere Null-Checks in Java mit JSpecify +
+https://www.heise.de/blog/Null-Problemo-Bessere-Null-Checks-in-Java-mit-JSpecify-9820606.html
+* JSpecify and NullAway: A fresh take on nullsafety in the Java world +
 https://michael-simons.eu/p/jspecify-and-nullaway-a-fresh-take-on-nullsafety-in-the-java-world.html
+* Dan Vega: Stop NullPointerExceptions Before Production with Spring Boot 4's Null Safety +
+https://www.danvega.dev/blog/spring-boot-4-null-safety
 
 == Danke! 🤗 Fragen?
