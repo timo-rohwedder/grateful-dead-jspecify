@@ -58,8 +58,9 @@ Cannot invoke "com.example.gratefuldeadjspecify.without.Address.getAddressLine()
 Eine NullPointerException haben vermutlich alle schon einmal in unterschiedlichsten Programmiersprachen verantwortet.
 
 [%step]
+[.r-fit-text]
 "Billion-Dollar Mistake"
--- Tony Hoare, referring to his 1965 introduction of the null reference in the ALGOL W programming language
+-- Tony Hoare (https://www.heise.de/hintergrund/Aus-Softwarefehlern-lernen-Teil-7-Der-Milliarden-Dollar-Fehler-11067587.html[Aus Softwarefehlern lernen – Teil 7: Der Milliarden-Dollar-Fehler]), in Bezug auf seine Einführung der Nullreferenz in der Programmiersprache ALGOL W im Jahr 1965.
 
 [%notitle]
 == Null Problemo
